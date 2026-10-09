@@ -24,6 +24,9 @@ server/data/media/*
 .heald/
 **/.heald/
 
+# Tool artifacts
+.playwright-mcp/
+
 # Temporary scripts & logs
 .push_loop.sh
 push_loop.log
