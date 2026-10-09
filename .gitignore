@@ -20,6 +20,10 @@ yarn-error.log*
 server/data/media/*
 !server/data/media/.gitkeep
 
+# Memory and protocols
+.heald/
+**/.heald/
+
 # Temporary scripts & logs
 .push_loop.sh
 push_loop.log
