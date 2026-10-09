@@ -36,7 +36,7 @@ export default function HostEventPage() {
     try {
       const res = await api('/api/host/event', {
         method: 'PATCH',
-        body: JSON.stringify({ joinOpen: !event.joinOpen }),
+        body: JSON.stringify({ eventId: event.id, joinOpen: !event.joinOpen }),
       });
       setEvent(res.event);
     } catch (err: any) {
@@ -49,7 +49,7 @@ export default function HostEventPage() {
     try {
       const res = await api('/api/host/event', {
         method: 'PATCH',
-        body: JSON.stringify({ requireApproval: !event.requireApproval }),
+        body: JSON.stringify({ eventId: event.id, requireApproval: !event.requireApproval }),
       });
       setEvent(res.event);
     } catch (err: any) {

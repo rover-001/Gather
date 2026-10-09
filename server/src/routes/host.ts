@@ -199,14 +199,23 @@ export async function hostRoutes(fastify: FastifyInstance) {
     // Update event properties (joinOpen, requireApproval, name, date)
     protectedRoutes.patch<{
       Body: {
+        eventId?: string;
         name?: string;
         date?: string;
         joinOpen?: boolean;
         requireApproval?: boolean;
       };
     }>('/api/host/event', async (req, reply) => {
-      const { name, date, joinOpen, requireApproval } = req.body || {};
-      const [existing] = await db.select().from(schema.event).limit(1);
+      const { eventId, name, date, joinOpen, requireApproval } = req.body || {};
+      const hostAuth = (req as any).hostAuth;
+      const targetId = eventId || hostAuth?.eventId;
+      let existing;
+      if (targetId) {
+        [existing] = await db.select().from(schema.event).where(eq(schema.event.id, targetId)).limit(1);
+      }
+      if (!existing) {
+        [existing] = await db.select().from(schema.event).limit(1);
+      }
       if (!existing) {
         return reply.status(404).send({ error: 'Event not found' });
       }
@@ -223,7 +232,12 @@ export async function hostRoutes(fastify: FastifyInstance) {
         .where(eq(schema.event.id, existing.id))
         .returning();
 
-      return { success: true, event: updated };
+      const publicUrl = process.env.PUBLIC_URL || `${req.protocol}://${req.host}`;
+      return {
+        success: true,
+        event: updated,
+        joinUrl: updated ? `${publicUrl}/e/${updated.slug}` : null,
+      };
     });
 
     // List all guests with their shots count and shared items count

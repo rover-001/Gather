@@ -36,10 +36,16 @@ export function HostLayout({ children, eventName }: HostLayoutProps) {
 
     api('/api/host/event')
       .then((data: any) => {
-        if (data.event) setCurrentEvent(data.event);
+        if (data.event) {
+          setCurrentEvent(data.event);
+        } else {
+          navigate('/host/setup');
+        }
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        navigate('/host/setup');
+      });
+  }, [navigate]);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -48,7 +54,7 @@ export function HostLayout({ children, eventName }: HostLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/host/logout', { method: 'POST' });
+      await api('/api/host/logout', { method: 'POST' });
     } finally {
       navigate('/host/setup');
     }

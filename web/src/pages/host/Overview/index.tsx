@@ -40,7 +40,7 @@ export default function HostOverviewPage() {
     try {
       const res: any = await api('/api/host/event', {
         method: 'PATCH',
-        body: JSON.stringify({ name, date }),
+        body: JSON.stringify({ eventId: data?.event?.id, name, date }),
       });
       if (res.event) {
         setData((prev: any) => ({ ...prev, event: res.event }));
