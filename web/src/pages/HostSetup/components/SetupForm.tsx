@@ -39,20 +39,20 @@ export function SetupForm({
     <form onSubmit={onSubmit} className="space-y-4">
       {isLoginMode && events.length > 0 && (
         <div>
-          <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5 flex items-center justify-between">
+          <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
             <span>Select Event to Open</span>
             {events.length > 1 && (
-              <span className="text-[10px] text-slate-400 font-normal">{events.length} available</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">{events.length} available</span>
             )}
           </label>
           <div className="relative">
             <select
               value={selectedEventId}
               onChange={(e) => setSelectedEventId?.(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition appearance-none cursor-pointer pr-10"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 text-sm transition appearance-none cursor-pointer pr-10"
             >
               {events.map((ev) => (
-                <option key={ev.id} value={ev.id}>
+                <option key={ev.id} value={ev.id} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
                   {ev.name} ({ev.slug}){ev.date ? ` • ${ev.date}` : ''}
                 </option>
               ))}
@@ -64,7 +64,7 @@ export function SetupForm({
       {!isLoginMode && (
         <>
           <div>
-            <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+            <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
               Couple or Event Name *
             </label>
             <input
@@ -73,21 +73,21 @@ export function SetupForm({
               placeholder="e.g. Sarah & Michael"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 text-sm transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5 flex items-center justify-between">
+            <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
               <span>Event Date</span>
-              <span className="text-[10px] text-slate-400">Optional</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500">Optional</span>
             </label>
             <div className="relative">
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 text-sm transition"
               />
               <Calendar className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
             </div>
@@ -96,7 +96,7 @@ export function SetupForm({
       )}
 
       <div>
-        <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+        <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
           Host Master Password *
         </label>
         <div className="relative">
@@ -106,12 +106,12 @@ export function SetupForm({
             placeholder="••••••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition"
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 text-sm transition"
           />
           <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
         </div>
         {!isLoginMode && (
-          <p className="text-[11px] text-slate-500 mt-1.5">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
             Keep this safe. Used to manage event QR passes, gallery sharing, and downloads.
           </p>
         )}

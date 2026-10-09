@@ -255,29 +255,29 @@ export default function HostLivePage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-2xl font-serif font-bold text-slate-900 tracking-tight">Live Camera Grid</h2>
-              <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+              <h2 className="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100 tracking-tight">Live Camera Grid</h2>
+              <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-semibold">
                 <Radio className="w-3.5 h-3.5 animate-pulse" />
                 <span>{streamArray.length} Live</span>
               </span>
-              <span className={`text-[11px] px-2 py-0.5 rounded-md font-mono ${wsConnected ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-800'}`}>
+              <span className={`text-[11px] px-2 py-0.5 rounded-md font-mono ${wsConnected ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'}`}>
                 {wsConnected ? 'Socket Connected' : 'Connecting...'}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Real-time guest camera previews. Click any stream to boost frame rate and view full size.
             </p>
           </div>
         </div>
 
         {streamArray.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-3xl p-16 text-center space-y-4 shadow-xs">
-            <div className="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+          <div className="bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-16 text-center space-y-4 shadow-xs">
+            <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
               <Radio className="w-8 h-8" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-serif text-lg font-bold text-slate-900">No active cameras streaming</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              <h3 className="font-serif text-lg font-bold text-slate-900 dark:text-slate-100">No active cameras streaming</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
                 When guests open the camera on their phones, their live low-latency video preview tiles will automatically appear here.
               </p>
             </div>

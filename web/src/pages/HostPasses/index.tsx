@@ -6,6 +6,7 @@ import { PassStatsBar } from './components/PassStatsBar';
 import { PassesTable } from './components/PassesTable';
 import { CreatePassDrawer } from './components/CreatePassDrawer';
 import { QrShareModal } from './components/QrShareModal';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function HostPasses() {
   const navigate = useNavigate();
@@ -151,23 +152,24 @@ export default function HostPasses() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-brand-600 selection:text-white pb-12">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090b0e] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-brand-600 selection:text-white pb-12">
       {/* Top Navbar */}
-      <header className="border-b border-slate-200 bg-white px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+      <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#12151c] px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-xs">
             <QrCode className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-lg font-serif font-bold text-slate-900">Passes & Access QRs</h1>
-            <p className="text-xs text-slate-500">Event QR codes for guests and photographers</p>
+            <h1 className="text-lg font-serif font-bold text-slate-900 dark:text-slate-100">Passes & Access QRs</h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Event QR codes for guests and photographers</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-3">
+          <ThemeToggle />
           <button
             onClick={() => navigate('/dash')}
-            className="text-xs px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition font-semibold cursor-pointer"
+            className="text-xs px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 transition font-semibold cursor-pointer"
           >
             Dashboard
           </button>

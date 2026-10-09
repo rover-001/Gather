@@ -20,27 +20,27 @@ export function EventMetaCard({
   saving,
 }: EventMetaCardProps) {
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-5 shadow-xs">
+    <div className="bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-5 shadow-xs">
       <div>
-        <h3 className="text-base font-semibold text-slate-900">Event Details</h3>
-        <p className="text-xs text-slate-500 mt-0.5">Title and date shown to guests</p>
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Event Details</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Title and date shown to guests</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+          <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
             Event Name
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:border-slate-900 focus:bg-white transition"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-[#0d1016] transition"
           />
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+          <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
             Event Date
           </label>
           <div className="relative">
@@ -48,21 +48,21 @@ export function EventMetaCard({
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:border-slate-900 focus:bg-white transition"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-[#0d1016] transition"
             />
             <Calendar className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+          <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
             Event URL Slug
           </label>
           <input
             type="text"
             disabled
             value={slug}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-mono text-xs cursor-not-allowed"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono text-xs cursor-not-allowed"
           />
           <p className="text-[11px] text-slate-400 mt-1">Unique public identifier</p>
         </div>

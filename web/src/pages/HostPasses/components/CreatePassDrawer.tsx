@@ -39,14 +39,14 @@ export function CreatePassDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs">
-      <div className="w-full max-w-md bg-white border-l border-slate-200 h-full p-6 flex flex-col justify-between overflow-y-auto shadow-2xl">
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/60 backdrop-blur-xs">
+      <div className="w-full max-w-md bg-white dark:bg-[#12151c] border-l border-slate-200 dark:border-slate-800 h-full p-6 flex flex-col justify-between overflow-y-auto shadow-2xl">
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-            <h2 className="text-xl font-serif font-bold text-slate-900">Issue Pass / QR Code</h2>
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+            <h2 className="text-xl font-serif font-bold text-slate-900 dark:text-slate-100">Issue Pass / QR Code</h2>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition cursor-pointer"
+              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -54,7 +54,7 @@ export function CreatePassDrawer({
 
           <form id="pass-form" onSubmit={onSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+              <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
                 Pass / QR Label *
               </label>
               <input
@@ -63,15 +63,15 @@ export function CreatePassDrawer({
                 placeholder="e.g. Table 4 QR, Guests, Photographers"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-[#0d1016] text-sm transition"
               />
-              <p className="text-[11px] text-slate-500 mt-1.5">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
                 Anyone who scans this QR code on their phone will instantly join with this role.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5">
+              <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">
                 Pass Role *
               </label>
               <div className="grid grid-cols-3 gap-2.5">
@@ -83,7 +83,7 @@ export function CreatePassDrawer({
                     className={`py-3 px-2 rounded-xl border text-xs font-semibold capitalize flex flex-col items-center justify-center space-y-1 transition cursor-pointer ${
                       role === r
                         ? 'bg-brand-600 border-brand-600 text-white'
-                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-400'
+                        : 'bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-600'
                     }`}
                   >
                     {r === 'camera' && <Camera className="w-4 h-4" />}
@@ -95,22 +95,22 @@ export function CreatePassDrawer({
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800">
               <div>
-                <span className="text-sm font-semibold text-slate-900 block">Allow Media Downloads</span>
-                <span className="text-xs text-slate-500">Can save photos/videos to phone</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 block">Allow Media Downloads</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">Can save photos/videos to phone</span>
               </div>
               <input
                 type="checkbox"
                 checked={canDownload}
                 onChange={(e) => setCanDownload(e.target.checked)}
-                className="w-5 h-5 accent-slate-900 rounded cursor-pointer"
+                className="w-5 h-5 accent-brand-600 rounded cursor-pointer"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold">
+                <label className="block text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                   Assign Groups (Optional)
                 </label>
               </div>
@@ -127,7 +127,7 @@ export function CreatePassDrawer({
                         className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer border ${
                           isSelected
                             ? 'bg-brand-600 text-white border-brand-600'
-                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-400'
+                            : 'bg-slate-50 dark:bg-[#090b0e] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
                         }`}
                       >
                         {group.name}
@@ -143,12 +143,12 @@ export function CreatePassDrawer({
                   placeholder="New group (e.g. VIP, Bridal Party)"
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition"
+                  className="flex-1 px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 focus:bg-white dark:focus:bg-[#0d1016] transition"
                 />
                 <button
                   type="button"
                   onClick={onCreateGroup}
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                 >
                   Add
                 </button>
@@ -157,11 +157,11 @@ export function CreatePassDrawer({
           </form>
         </div>
 
-        <div className="pt-6 border-t border-slate-200 flex items-center space-x-3">
+        <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 px-4 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+            className="flex-1 py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
           >
             Cancel
           </button>

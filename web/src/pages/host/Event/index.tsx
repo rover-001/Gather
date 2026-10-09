@@ -70,14 +70,14 @@ export default function HostEventPage() {
       <div className="space-y-6 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-serif font-bold text-slate-900 tracking-tight">Event Join QR & Access</h2>
-            <p className="text-xs text-slate-500 mt-1">
+            <h2 className="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100 tracking-tight">Event Join QR & Access</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Share this single QR code with all guests to allow registration and capture.
             </p>
           </div>
           <a
             href="/host"
-            className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 bg-white"
+            className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#12151c] transition"
           >
             ← Back to Overview
           </a>

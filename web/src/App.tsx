@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import GuestJoinPage from './pages/guest/Join';
 import { MeshProvider } from './lib/p2p/MeshContext';
 import { MeshModal } from './components/p2p/MeshModal';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Lazy load remaining pages
 const Landing = lazy(() => import('./pages/Landing'));
@@ -23,7 +24,7 @@ const GuestMePage = lazy(() => import('./pages/guest/Me'));
 
 function RouteLoading() {
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6 text-slate-400 text-xs">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090b0e] flex items-center justify-center p-6 text-slate-400 text-xs">
       Loading...
     </div>
   );
@@ -31,8 +32,9 @@ function RouteLoading() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <MeshProvider>
+    <ThemeProvider>
+      <BrowserRouter>
+        <MeshProvider>
         <Suspense fallback={<RouteLoading />}>
           <Routes>
             {/* Landing Page */}
@@ -63,5 +65,6 @@ export default function App() {
         <MeshModal />
       </MeshProvider>
     </BrowserRouter>
+  </ThemeProvider>
   );
 }

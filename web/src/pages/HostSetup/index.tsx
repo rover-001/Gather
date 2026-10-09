@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HeartHandshake, AlertCircle } from 'lucide-react';
 import { SetupForm } from './components/SetupForm';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function HostSetup() {
   const navigate = useNavigate();
@@ -62,16 +63,20 @@ export default function HostSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col items-center justify-center p-6 selection:bg-brand-600 selection:text-white">
-      <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50 space-y-6">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090b0e] text-slate-900 dark:text-slate-100 flex flex-col items-center justify-center p-6 selection:bg-brand-600 selection:text-white transition-colors duration-200 relative">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
+
+      <div className="max-w-md w-full bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-100 text-slate-800 mb-2 border border-slate-200">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 mb-2 border border-slate-200 dark:border-slate-700">
             <HeartHandshake className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-serif font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-slate-900 dark:text-white">
             {isLoginMode ? 'Host Access' : 'Create New Event'}
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {isLoginMode
               ? 'Enter your host master password to manage your event'
               : 'Setup a new private wedding or event lens'}
@@ -79,7 +84,7 @@ export default function HostSetup() {
         </div>
 
         {/* Mode Toggle Tabs */}
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
           <button
             type="button"
             onClick={() => {
@@ -87,7 +92,7 @@ export default function HostSetup() {
               setError(null);
             }}
             className={`py-2 rounded-lg transition cursor-pointer ${
-              isLoginMode ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+              isLoginMode ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Log In
@@ -99,7 +104,7 @@ export default function HostSetup() {
               setError(null);
             }}
             className={`py-2 rounded-lg transition cursor-pointer ${
-              !isLoginMode ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+              !isLoginMode ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Create New Event
@@ -107,7 +112,7 @@ export default function HostSetup() {
         </div>
 
         {error && (
-          <div className="flex items-center space-x-2 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+          <div className="flex items-center space-x-2 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>

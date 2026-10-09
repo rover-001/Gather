@@ -20,31 +20,31 @@ export function TempCodeModal({ isOpen, onClose, tempCode, guestName }: TempCode
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-      <div className="max-w-sm w-full bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-5 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+      <div className="max-w-sm w-full bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 text-center space-y-5 shadow-2xl">
         <div className="flex items-center justify-between">
-          <h3 className="font-serif text-lg font-bold text-slate-900">Password Reset</h3>
+          <h3 className="font-serif text-lg font-bold text-slate-900 dark:text-slate-100">Password Reset</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-900 cursor-pointer"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-1">
-          <p className="text-xs text-slate-500">
-            One-time 6-digit login code generated for <strong className="text-slate-800">{guestName}</strong>:
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            One-time 6-digit login code generated for <strong className="text-slate-800 dark:text-slate-200">{guestName}</strong>:
           </p>
         </div>
 
-        <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-          <span className="font-mono text-3xl font-extrabold tracking-widest text-slate-900">
+        <div className="p-4 bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 rounded-2xl">
+          <span className="font-mono text-3xl font-extrabold tracking-widest text-slate-900 dark:text-slate-100">
             {tempCode}
           </span>
         </div>
 
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed">
           Provide this code to the guest. When they log in with their phone and this code, they will be forced to choose a new password.
         </p>
 

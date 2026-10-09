@@ -45,24 +45,24 @@ export function QrCenterCard({ joinUrl, slug }: QrCenterCardProps) {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-8 flex flex-col items-center text-center space-y-6 shadow-xs">
+    <div className="bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center text-center space-y-6 shadow-xs">
       <div>
-        <h3 className="text-base font-semibold text-slate-900">Official Event Join QR</h3>
-        <p className="text-xs text-slate-500 mt-0.5">Guests scan with their camera to enter</p>
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Official Event Join QR</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Guests scan with their camera to enter</p>
       </div>
 
-      <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl shadow-inner inline-block">
+      <div className="p-6 bg-white border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-sm inline-block">
         <QRCodeSVG id="event-qr-svg" value={joinUrl} size={240} level="H" />
       </div>
 
       <div className="w-full space-y-3">
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-          <span className="font-mono text-slate-700 truncate mr-2">{joinUrl}</span>
+        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-xs">
+          <span className="font-mono text-slate-700 dark:text-slate-300 truncate mr-2">{joinUrl}</span>
           <button
             onClick={handleCopy}
-            className="flex items-center space-x-1 font-semibold text-slate-900 hover:text-slate-600 cursor-pointer shrink-0"
+            className="flex items-center space-x-1 font-semibold text-slate-900 dark:text-slate-200 hover:text-slate-600 dark:hover:text-white cursor-pointer shrink-0"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
         </div>
@@ -77,7 +77,7 @@ export function QrCenterCard({ joinUrl, slug }: QrCenterCardProps) {
           </button>
           <button
             onClick={handlePrint}
-            className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition border border-slate-200 cursor-pointer"
+            className="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs transition border border-slate-200 dark:border-slate-700 cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print QR Card</span>

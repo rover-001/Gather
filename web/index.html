@@ -8,6 +8,7 @@
     <title>Gather</title>
     <style>
       body { margin: 0; background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+      html.dark body { background-color: #090b0e; color: #f8fafc; }
       #root:empty::before {
         content: "Loading Gather...";
         display: flex;
@@ -19,6 +20,21 @@
         letter-spacing: 0.02em;
       }
     </style>
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('gather-theme');
+          var isDark = t === 'dark' || (t !== 'light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

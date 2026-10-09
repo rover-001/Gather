@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Gather palette: charcoal + electric blue */
   --color-brand-50: #eef3ff;
@@ -28,6 +30,16 @@
     --brand-border: #e2e8f0;
     --brand-dark: #16181d;
     --brand-muted: #64748b;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --brand-bg: #090b0e;
+    --brand-surface: #12151c;
+    --brand-card: #181c25;
+    --brand-border: #222734;
+    --brand-dark: #f8fafc;
+    --brand-muted: #94a3b8;
   }
 
   body {

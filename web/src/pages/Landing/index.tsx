@@ -26,6 +26,7 @@ import {
 import { PhoneMockup } from './components/PhoneMockup';
 import { Reveal } from './components/Reveal';
 import { LogoMark } from '../../components/Logo';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 const ACCENT = 'bg-brand-600 text-white';
 
@@ -139,28 +140,29 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f6f4ee] text-slate-900 font-sans selection:bg-brand-600 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#f6f4ee] dark:bg-[#090b0e] text-slate-900 dark:text-slate-100 font-sans selection:bg-brand-600 selection:text-white overflow-x-hidden transition-colors duration-200">
       {/* Nav */}
-      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#f6f4ee]/80 g-hero-in">
+      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#f6f4ee]/80 dark:bg-[#090b0e]/80 border-b border-transparent dark:border-slate-800/60 g-hero-in">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-4">
           <a href="/" className="flex items-center gap-2">
             <LogoMark className="w-8 h-8" />
-            <span className="font-serif font-black text-xl tracking-tight">gather</span>
+            <span className="font-serif font-black text-xl tracking-tight text-slate-900 dark:text-white">gather</span>
           </a>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-            <a href="#features" className="hover:text-slate-900 transition">Features</a>
-            <a href="#how" className="hover:text-slate-900 transition">How it works</a>
-            <a href="#events" className="hover:text-slate-900 transition">Events</a>
-            <a href="#emergency" className="hover:text-slate-900 transition">Emergency</a>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
+            <a href="#features" className="hover:text-slate-900 dark:hover:text-white transition">Features</a>
+            <a href="#how" className="hover:text-slate-900 dark:hover:text-white transition">How it works</a>
+            <a href="#events" className="hover:text-slate-900 dark:hover:text-white transition">Events</a>
+            <a href="#emergency" className="hover:text-slate-900 dark:hover:text-white transition">Emergency</a>
           </nav>
           <div className="flex items-center gap-2">
-            <a href="#join" className="hidden sm:inline-block whitespace-nowrap text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2">
+            <ThemeToggle />
+            <a href="#join" className="hidden sm:inline-block whitespace-nowrap text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-2">
               Join an event
             </a>
-            <a href="/dash" className="hidden sm:inline-block text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2">
+            <a href="/dash" className="hidden sm:inline-block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-2">
               Console
             </a>
-            <a href="/host/setup" className="text-sm font-semibold bg-slate-900 hover:bg-brand-600 text-white px-5 py-2.5 rounded-full transition-colors duration-200">
+            <a href="/host/setup" className="text-sm font-semibold bg-slate-900 dark:bg-brand-600 hover:bg-brand-600 dark:hover:bg-brand-500 text-white px-5 py-2.5 rounded-full transition-colors duration-200 shadow-xs">
               Host an event
             </a>
           </div>

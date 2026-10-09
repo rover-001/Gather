@@ -200,13 +200,13 @@ export default function HostGalleryPage() {
     <HostLayout>
       <div className="space-y-6 pb-20">
         {/* Header and Filter Controls */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#12151c] p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex flex-wrap items-center gap-3">
             {/* Filter by Guest */}
             <select
               value={filterGuestId}
               onChange={(e) => setFilterGuestId(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-900 cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 cursor-pointer"
             >
               <option value="all">All Guests ({guests.length})</option>
               {guests.map((g) => (
@@ -220,7 +220,7 @@ export default function HostGalleryPage() {
             <select
               value={filterKind}
               onChange={(e) => setFilterKind(e.target.value as any)}
-              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-900 cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 cursor-pointer"
             >
               <option value="all">All Types</option>
               <option value="photo">Photos only</option>
@@ -231,7 +231,7 @@ export default function HostGalleryPage() {
             <select
               value={filterVisibility}
               onChange={(e) => setFilterVisibility(e.target.value as any)}
-              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-900 cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#090b0e] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 cursor-pointer"
             >
               <option value="all">All Sharing States</option>
               <option value="host">Private (Host only)</option>
@@ -242,14 +242,14 @@ export default function HostGalleryPage() {
 
           <div className="flex items-center space-x-2.5">
             {/* View Mode Toggle: Folders vs All Grid */}
-            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+            <div className="flex bg-slate-100 dark:bg-[#090b0e] p-1 rounded-xl border border-slate-200/80 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setIsGroupedByFolder(true)}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer ${
                   isGroupedByFolder
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-xs'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
                 title="Group photos by guest folders"
               >
@@ -261,8 +261,8 @@ export default function HostGalleryPage() {
                 onClick={() => setIsGroupedByFolder(false)}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer ${
                   !isGroupedByFolder
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-xs'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
                 title="View all photos in flat grid"
               >
@@ -275,11 +275,11 @@ export default function HostGalleryPage() {
 
             <button
               onClick={selectAll}
-              className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition flex items-center space-x-2 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-[#090b0e] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition flex items-center space-x-2 cursor-pointer"
             >
               {selectedIds.length > 0 && selectedIds.length === media.length ? (
                 <>
-                  <CheckSquare className="w-4 h-4 text-slate-900" />
+                  <CheckSquare className="w-4 h-4 text-slate-900 dark:text-slate-100" />
                   <span>Deselect All</span>
                 </>
               ) : (
@@ -361,12 +361,12 @@ export default function HostGalleryPage() {
             onClick={() => setPreviewItem(null)}
           >
             <div
-              className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200"
+              className="bg-white dark:bg-[#12151c] rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-sm text-slate-900">
+                  <h4 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                     Uploaded by {previewItem.uploaderName}
                   </h4>
                   <p className="text-xs text-slate-400 font-mono">
@@ -378,14 +378,14 @@ export default function HostGalleryPage() {
                     href={previewItem.path}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 text-slate-500 hover:text-slate-900 rounded-xl hover:bg-slate-100"
+                    className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                     title="Open raw file"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
                   <button
                     onClick={() => setPreviewItem(null)}
-                    className="p-2 text-slate-500 hover:text-slate-900 rounded-xl hover:bg-slate-100 cursor-pointer"
+                    className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -409,9 +409,9 @@ export default function HostGalleryPage() {
                 )}
               </div>
 
-              <div className="p-4 bg-slate-50 flex items-center justify-between">
-                <div className="text-xs text-slate-600">
-                  <span className="font-semibold">Sharing status: </span>
+              <div className="p-4 bg-slate-50 dark:bg-[#090b0e] flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+                <div className="text-xs text-slate-600 dark:text-slate-300">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">Sharing status: </span>
                   {previewItem.visibility === 'all' && 'Shared with Everyone'}
                   {previewItem.visibility === 'selected' &&
                     `Shared with ${previewItem.sharedGuestNames.join(', ')}`}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AlertCircle, Lock } from 'lucide-react';
 import { LogoMark } from '../../../components/Logo';
 import { JoinForm } from './components/JoinForm';
+import { ThemeToggle } from '../../../components/ThemeToggle';
 import { api } from '../../../lib/api';
 
 export default function GuestJoinPage() {
@@ -63,13 +64,16 @@ export default function GuestJoinPage() {
 
   if (event && !event.joinOpen) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 text-center">
-        <div className="max-w-sm w-full bg-white border border-slate-200 rounded-3xl p-8 space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto border border-amber-200">
+      <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090b0e] flex flex-col items-center justify-center p-6 text-center transition-colors duration-200 relative">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
+        <div className="max-w-sm w-full bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto border border-amber-200 dark:border-amber-800">
             <Lock className="w-6 h-6" />
           </div>
-          <h2 className="font-serif text-xl font-bold text-slate-900">{event.name}</h2>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <h2 className="font-serif text-xl font-bold text-slate-900 dark:text-white">{event.name}</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             Joining is currently closed for this event. If you already joined, you can log in below.
           </p>
           <a
@@ -84,15 +88,18 @@ export default function GuestJoinPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col items-center justify-center p-4 selection:bg-brand-600 selection:text-white">
-      <div className="max-w-[390px] w-full bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 space-y-6">
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#090b0e] text-slate-900 dark:text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-brand-600 selection:text-white transition-colors duration-200 relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <div className="max-w-[390px] w-full bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6">
         {/* Header with Serif title */}
         <div className="text-center space-y-1.5">
           <LogoMark className="w-12 h-12 mx-auto mb-1" />
-          <h1 className="text-2xl font-serif font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-slate-900 dark:text-white">
             {event?.name || 'Private Event'}
           </h1>
-          <p className="text-xs text-slate-500">Join to share your photos and videos</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Join to share your photos and videos</p>
         </div>
 
         {error && (

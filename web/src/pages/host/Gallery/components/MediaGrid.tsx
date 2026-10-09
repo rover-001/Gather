@@ -39,12 +39,12 @@ export function MediaGrid({
 
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto my-12 shadow-xs">
-        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+      <div className="bg-white dark:bg-[#12151c] rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center max-w-md mx-auto my-12 shadow-xs">
+        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-400">
           <Globe className="w-6 h-6" />
         </div>
-        <h4 className="font-serif text-lg font-bold text-slate-900 mb-1">No media yet</h4>
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <h4 className="font-serif text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">No media yet</h4>
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           Photos and videos captured by guests will automatically appear here in real-time.
         </p>
       </div>
@@ -58,14 +58,14 @@ export function MediaGrid({
     return (
       <div
         key={item.id}
-        className={`group relative rounded-2xl overflow-hidden bg-slate-100 border transition-all ${
+        className={`group relative rounded-2xl overflow-hidden bg-slate-100 dark:bg-[#12151c] border transition-all ${
           isSelected
             ? 'ring-2 ring-brand-600 border-brand-600 shadow-md'
-            : 'border-slate-200/80 hover:border-slate-300'
+            : 'border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
         }`}
       >
         {/* Aspect ratio box */}
-        <div className="aspect-square relative w-full bg-slate-200 overflow-hidden">
+        <div className="aspect-square relative w-full bg-slate-200 dark:bg-slate-900 overflow-hidden">
           {item.kind === 'photo' ? (
             <img
               src={item.thumbPath || item.path}
@@ -166,11 +166,11 @@ export function MediaGrid({
         </div>
 
         {/* Bottom meta bar */}
-        <div className="p-2 bg-white flex items-center justify-between text-[11px] border-t border-slate-100">
-          <span className="font-semibold text-slate-800 truncate" title={item.uploaderName}>
+        <div className="p-2 bg-white dark:bg-[#12151c] flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-slate-800">
+          <span className="font-semibold text-slate-800 dark:text-slate-200 truncate" title={item.uploaderName}>
             {item.uploaderName}
           </span>
-          <span className="text-slate-400 text-[10px] shrink-0 font-mono">
+          <span className="text-slate-400 dark:text-slate-500 text-[10px] shrink-0 font-mono">
             {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
@@ -205,7 +205,7 @@ export function MediaGrid({
           <div className="flex items-center justify-between mb-3 px-1">
             <div className="flex items-center space-x-2">
               <Folder className="w-4 h-4 text-amber-500 fill-amber-500/20" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Folders ({folderList.length})
               </h3>
             </div>
@@ -213,7 +213,7 @@ export function MediaGrid({
               <button
                 type="button"
                 onClick={() => setActiveFolderId(null)}
-                className="text-xs font-semibold text-slate-500 hover:text-slate-900 flex items-center space-x-1 cursor-pointer"
+                className="text-xs font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 flex items-center space-x-1 cursor-pointer"
               >
                 <span>View all folders</span>
               </button>
@@ -233,11 +233,11 @@ export function MediaGrid({
                   className={`group relative p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                     isOpen
                       ? 'bg-amber-500/10 border-amber-400 ring-2 ring-amber-400 shadow-sm'
-                      : 'bg-white hover:bg-slate-50 border-slate-200/90 hover:border-slate-300 shadow-xs hover:shadow-sm'
+                      : 'bg-white dark:bg-[#12151c] hover:bg-slate-50 dark:hover:bg-slate-800/50 border-slate-200/90 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100/80 border border-amber-200/80 flex items-center justify-center text-amber-600 transition group-hover:scale-105">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/40 flex items-center justify-center text-amber-600 dark:text-amber-400 transition group-hover:scale-105">
                       {isOpen ? (
                         <FolderOpen className="w-5 h-5 fill-amber-500/30" />
                       ) : (
@@ -253,7 +253,7 @@ export function MediaGrid({
                             e.stopPropagation();
                             onDeleteFolder(folder.guestId, folder.uploaderName, folder.items.length);
                           }}
-                          className="w-6 h-6 rounded-lg flex items-center justify-center transition border bg-white/80 border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200"
+                          className="w-6 h-6 rounded-lg flex items-center justify-center transition border bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:border-red-200 dark:hover:border-red-800/40"
                           title={`Delete entire ${folder.uploaderName}'s folder`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -277,7 +277,7 @@ export function MediaGrid({
                         className={`w-6 h-6 rounded-lg flex items-center justify-center transition border ${
                           allInFolderSelected
                             ? 'bg-brand-600 border-brand-600 text-white'
-                            : 'bg-white/80 border-slate-200 text-transparent hover:text-slate-400'
+                            : 'bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-transparent hover:text-slate-400'
                         }`}
                         title={allInFolderSelected ? 'Deselect entire folder' : 'Select entire folder'}
                       >
@@ -287,12 +287,12 @@ export function MediaGrid({
                   </div>
 
                   <div className="mt-3">
-                    <h4 className="font-bold text-xs text-slate-900 truncate" title={folder.uploaderName}>
+                    <h4 className="font-bold text-xs text-slate-900 dark:text-slate-100 truncate" title={folder.uploaderName}>
                       {folder.uploaderName}
                     </h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center justify-between">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 flex items-center justify-between">
                       <span>{folder.items.length} {folder.items.length === 1 ? 'file' : 'files'}</span>
-                      <span className="text-[10px] text-amber-600 font-semibold">
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
                         {isOpen ? 'Open' : 'Tap to open'}
                       </span>
                     </p>
@@ -305,23 +305,23 @@ export function MediaGrid({
 
         {/* Selected Folder Contents Inspector */}
         {activeFolder ? (
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="bg-white dark:bg-[#12151c] rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm p-5 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Breadcrumb Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center space-x-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setActiveFolderId(null)}
-                  className="text-slate-500 hover:text-slate-900 font-medium cursor-pointer"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium cursor-pointer"
                 >
                   Gallery
                 </button>
-                <span className="text-slate-300">/</span>
-                <div className="flex items-center space-x-1.5 font-bold text-slate-900">
+                <span className="text-slate-300 dark:text-slate-600">/</span>
+                <div className="flex items-center space-x-1.5 font-bold text-slate-900 dark:text-slate-100">
                   <FolderOpen className="w-4 h-4 text-amber-500 fill-amber-500/30" />
                   <span>{activeFolder.uploaderName}&apos;s Folder</span>
                 </div>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 ml-1">
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ml-1">
                   {activeFolder.items.length} items
                 </span>
               </div>
@@ -333,10 +333,10 @@ export function MediaGrid({
                     onClick={() => {
                       onDeleteFolder(activeFolder.guestId, activeFolder.uploaderName, activeFolder.items.length);
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold transition cursor-pointer flex items-center space-x-1 border border-red-200"
+                    className="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 text-xs font-semibold transition cursor-pointer flex items-center space-x-1 border border-red-200 dark:border-red-800/50"
                     title="Delete entire folder"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                    <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                     <span>Delete Folder</span>
                   </button>
                 )}
@@ -351,7 +351,7 @@ export function MediaGrid({
                       for (const id of ids) if (!selectedIds.includes(id)) onToggleSelect(id);
                     }
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition cursor-pointer"
                 >
                   {activeFolder.items.every((i) => selectedIds.includes(i.id))
                     ? 'Deselect folder items'
@@ -360,7 +360,7 @@ export function MediaGrid({
                 <button
                   type="button"
                   onClick={() => setActiveFolderId(null)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg cursor-pointer"
                   title="Close folder view"
                 >
                   <ChevronDown className="w-4 h-4" />
@@ -374,12 +374,12 @@ export function MediaGrid({
             </div>
           </div>
         ) : (
-          <div className="bg-slate-50 rounded-2xl border border-dashed border-slate-200 p-8 text-center max-w-sm mx-auto">
-            <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-2xs">
+          <div className="bg-slate-50 dark:bg-[#090b0e] rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-8 text-center max-w-sm mx-auto">
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-400 shadow-2xs">
               <Folder className="w-5 h-5 text-amber-500 fill-amber-500/20" />
             </div>
-            <p className="text-xs text-slate-600 font-semibold">Select a folder above to view its images</p>
-            <p className="text-[11px] text-slate-400 mt-1">Each guest has their own dedicated folder</p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-semibold">Select a folder above to view its images</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Each guest has their own dedicated folder</p>
           </div>
         )}
       </div>

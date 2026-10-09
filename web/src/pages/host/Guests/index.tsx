@@ -141,8 +141,8 @@ export default function HostGuestsPage() {
       <div className="space-y-6 max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-serif font-bold text-slate-900 tracking-tight">Guests Directory</h2>
-            <p className="text-xs text-slate-500 mt-1">
+            <h2 className="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100 tracking-tight">Guests Directory</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Registered guests, download permissions, and access management.
             </p>
           </div>
@@ -155,19 +155,19 @@ export default function HostGuestsPage() {
               placeholder="Search name or phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 shadow-2xs leading-normal"
+              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white dark:bg-[#12151c] border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-slate-900 dark:focus:border-brand-500 shadow-2xs leading-normal transition"
             />
           </div>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto">
+        <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto">
           <button
             onClick={() => setActiveTab('all')}
             className={`inline-flex items-center justify-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === 'all'
                 ? 'bg-brand-600 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:text-slate-200'
             }`}
           >
             <UserCheck className="w-4 h-4 shrink-0" />
@@ -179,7 +179,7 @@ export default function HostGuestsPage() {
             className={`inline-flex items-center justify-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === 'pending'
                 ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:text-slate-200'
             }`}
           >
             <Clock className="w-4 h-4 shrink-0" />
@@ -191,7 +191,7 @@ export default function HostGuestsPage() {
             className={`inline-flex items-center justify-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === 'blocked'
                 ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:text-slate-200'
             }`}
           >
             <Ban className="w-4 h-4 shrink-0" />
