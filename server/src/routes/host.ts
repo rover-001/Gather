@@ -12,7 +12,7 @@ import { connectedGuests, MEDIA_DIR } from '../index.js';
 export async function hostRoutes(fastify: FastifyInstance) {
   // Public status check
   fastify.get('/api/host/status', async (_req, reply) => {
-    const [existing] = await db
+    const allEvents = await db
       .select({
         id: schema.event.id,
         name: schema.event.name,
@@ -22,11 +22,12 @@ export async function hostRoutes(fastify: FastifyInstance) {
         requireApproval: schema.event.requireApproval,
       })
       .from(schema.event)
-      .limit(1);
+      .orderBy(desc(schema.event.id));
 
     return {
-      hasEvent: !!existing,
-      event: existing || null,
+      hasEvent: allEvents.length > 0,
+      event: allEvents[0] || null,
+      events: allEvents,
     };
   });
 
@@ -78,23 +79,32 @@ export async function hostRoutes(fastify: FastifyInstance) {
   );
 
   // Host Login
-  fastify.post<{ Body: { password: string } }>(
+  fastify.post<{ Body: { password: string; eventId?: string } }>(
     '/api/host/login',
     {
       config: {
         rateLimit: {
-          max: 5,
+          max: 10,
           timeWindow: '1 minute',
         },
       },
     },
     async (req, reply) => {
-      const { password } = req.body || {};
+      const { password, eventId } = req.body || {};
       if (!password) {
         return reply.status(400).send({ error: 'Password required' });
       }
 
-      const [existingEvent] = await db.select().from(schema.event).limit(1);
+      let existingEvent;
+      if (eventId) {
+        const [found] = await db.select().from(schema.event).where(eq(schema.event.id, eventId)).limit(1);
+        existingEvent = found;
+      }
+      if (!existingEvent) {
+        const [first] = await db.select().from(schema.event).limit(1);
+        existingEvent = first;
+      }
+
       if (!existingEvent) {
         return reply.status(404).send({ error: 'No event setup yet. Please run setup first.' });
       }

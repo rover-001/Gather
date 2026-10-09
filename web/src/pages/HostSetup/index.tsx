@@ -6,6 +6,8 @@ import { SetupForm } from './components/SetupForm';
 export default function HostSetup() {
   const navigate = useNavigate();
   const [hasEvent, setHasEvent] = useState<boolean | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<string>('');
   const [isLoginMode, setIsLoginMode] = useState<boolean>(false);
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
@@ -18,6 +20,10 @@ export default function HostSetup() {
       .then((res) => res.json())
       .then((data) => {
         setHasEvent(data.hasEvent);
+        if (data.events && data.events.length > 0) {
+          setEvents(data.events);
+          setSelectedEventId(data.events[0].id);
+        }
         if (data.hasEvent) {
           setIsLoginMode(true);
         }
@@ -32,7 +38,9 @@ export default function HostSetup() {
 
     try {
       const endpoint = isLoginMode ? '/api/host/login' : '/api/host/setup';
-      const payload = isLoginMode ? { password } : { name, date, password };
+      const payload = isLoginMode
+        ? { password, eventId: selectedEventId || undefined }
+        : { name, date, password };
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -107,6 +115,9 @@ export default function HostSetup() {
 
         <SetupForm
           isLoginMode={isLoginMode}
+          events={events}
+          selectedEventId={selectedEventId}
+          setSelectedEventId={setSelectedEventId}
           name={name}
           setName={setName}
           date={date}

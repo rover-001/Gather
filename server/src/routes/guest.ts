@@ -12,7 +12,11 @@ import sharp from 'sharp';
 import archiver from 'archiver';
 import { pipeline } from 'stream/promises';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { MEDIA_DIR, connectedHosts, connectedGuests } from '../index.js';
+
+const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -139,6 +143,7 @@ export async function guestRoutes(fastify: FastifyInstance) {
 
       return {
         success: true,
+        token,
         guest: {
           id: newGuest.id,
           name: newGuest.name,
@@ -220,6 +225,7 @@ export async function guestRoutes(fastify: FastifyInstance) {
 
       return {
         success: true,
+        token,
         guest: {
           id: guestRow.id,
           name: guestRow.name,
@@ -292,12 +298,91 @@ export async function guestRoutes(fastify: FastifyInstance) {
       }
     );
 
-    // Upload Photo (multipart)
+    // Helper to process and store an uploaded video file
+    const saveUploadedVideo = async (guest: any, data: any) => {
+      const passDir = path.resolve(MEDIA_DIR, guest.id);
+      if (!fs.existsSync(passDir)) {
+        fs.mkdirSync(passDir, { recursive: true });
+      }
+
+      const fileId = crypto.randomUUID();
+      const mime = data.mimetype || '';
+      const filename = data.filename || '';
+
+      let ext = '.mp4';
+      if (mime.includes('webm') || /\.webm$/i.test(filename)) {
+        ext = '.webm';
+      } else if (mime.includes('quicktime') || /\.mov$/i.test(filename)) {
+        ext = '.mov';
+      } else if (mime.includes('ogg') || /\.ogv$/i.test(filename)) {
+        ext = '.ogv';
+      }
+
+      const filePath = path.join(passDir, `${fileId}${ext}`);
+      const thumbPath = path.join(passDir, `${fileId}_thumb.jpg`);
+
+      await pipeline(data.file, fs.createWriteStream(filePath));
+      const stats = fs.statSync(filePath);
+
+      let hasThumb = false;
+      try {
+        await execAsync(`ffmpeg -y -ss 00:00:00.500 -i "${filePath}" -vframes 1 -vf "scale=400:-1" "${thumbPath}"`);
+        if (fs.existsSync(thumbPath) && fs.statSync(thumbPath).size > 0) {
+          hasThumb = true;
+        }
+      } catch {
+        // ffmpeg thumbnail optional fallback
+      }
+
+      const relPath = `/media-files/${guest.id}/${fileId}${ext}`;
+      const relThumb = hasThumb ? `/media-files/${guest.id}/${fileId}_thumb.jpg` : relPath;
+
+      const [newMedia] = await db
+        .insert(schema.media)
+        .values({
+          eventId: guest.eventId,
+          guestId: guest.id,
+          kind: 'video',
+          path: relPath,
+          thumbPath: relThumb,
+          sizeBytes: stats.size,
+          visibility: 'host',
+        })
+        .returning();
+
+      for (const hostSocket of connectedHosts) {
+        if (hostSocket.readyState === 1) {
+          hostSocket.send(JSON.stringify({ type: 'new_media', media: newMedia }));
+        }
+      }
+
+      const guestSockets = connectedGuests.get(guest.id);
+      if (guestSockets) {
+        for (const gs of guestSockets) {
+          if (gs.readyState === 1) {
+            gs.send(JSON.stringify({ type: 'gallery_updated', media: newMedia }));
+          }
+        }
+      }
+
+      return newMedia;
+    };
+
+    // Upload Photo (multipart) - Auto-routes video files if received
     protectedRoutes.post('/api/upload/photo', async (req, reply) => {
       const guest = (req as any).guest;
       const data = await req.file();
       if (!data) {
         return reply.status(400).send({ error: 'No file uploaded' });
+      }
+
+      const mime = data.mimetype || '';
+      const filename = data.filename || '';
+      const isVideo = mime.startsWith('video/') || /\.(mp4|webm|mov|ogv)$/i.test(filename);
+
+      if (isVideo) {
+        const media = await saveUploadedVideo(guest, data);
+        return { success: true, media };
       }
 
       const passDir = path.resolve(MEDIA_DIR, guest.id);
@@ -360,24 +445,37 @@ export async function guestRoutes(fastify: FastifyInstance) {
       return { success: true, media: newMedia };
     });
 
-    // Upload Video Chunk
-    const videoUploads = new Map<string, { expectedSeq: number; filePath: string }>();
+    // Upload Dedicated Video (multipart)
+    protectedRoutes.post('/api/upload/video', async (req, reply) => {
+      const guest = (req as any).guest;
+      const data = await req.file();
+      if (!data) {
+        return reply.status(400).send({ error: 'No video uploaded' });
+      }
+
+      const media = await saveUploadedVideo(guest, data);
+      return { success: true, media };
+    });
+
+    // Upload Video Chunk (Supported for progressive streaming)
+    const videoUploads = new Map<string, { expectedSeq: number; filePath: string; ext: string }>();
 
     protectedRoutes.post<{
-      Querystring: { id: string; seq: string };
+      Querystring: { id: string; seq: string; ext?: string };
     }>('/api/upload/video-chunk', async (req, reply) => {
       const guest = (req as any).guest;
-      const { id, seq } = req.query;
+      const { id, seq, ext = 'mp4' } = req.query;
       const seqNum = parseInt(seq, 10);
 
       const passDir = path.resolve(MEDIA_DIR, guest.id);
       if (!fs.existsSync(passDir)) fs.mkdirSync(passDir, { recursive: true });
 
-      const targetPath = path.join(passDir, `${id}.mp4`);
+      const fileExt = ext.startsWith('.') ? ext : `.${ext}`;
+      const targetPath = path.join(passDir, `${id}${fileExt}`);
 
       let session = videoUploads.get(id);
       if (!session) {
-        session = { expectedSeq: 0, filePath: targetPath };
+        session = { expectedSeq: 0, filePath: targetPath, ext: fileExt };
         videoUploads.set(id, session);
       }
 
@@ -403,12 +501,39 @@ export async function guestRoutes(fastify: FastifyInstance) {
       const { id } = req.query;
 
       const session = videoUploads.get(id);
-      if (!session || !fs.existsSync(session.filePath)) {
-        return reply.status(404).send({ error: 'Video upload session not found' });
+      const passDir = path.resolve(MEDIA_DIR, guest.id);
+      let targetPath = session?.filePath;
+      let ext = session?.ext || '.mp4';
+
+      if (!targetPath || !fs.existsSync(targetPath)) {
+        // Fallback check on disk
+        const possibleMp4 = path.join(passDir, `${id}.mp4`);
+        const possibleWebm = path.join(passDir, `${id}.webm`);
+        if (fs.existsSync(possibleMp4)) {
+          targetPath = possibleMp4;
+          ext = '.mp4';
+        } else if (fs.existsSync(possibleWebm)) {
+          targetPath = possibleWebm;
+          ext = '.webm';
+        } else {
+          return reply.status(404).send({ error: 'Video upload session not found' });
+        }
       }
 
-      const stats = fs.statSync(session.filePath);
-      const relPath = `/media-files/${guest.id}/${id}.mp4`;
+      const stats = fs.statSync(targetPath);
+      const thumbPath = path.join(passDir, `${id}_thumb.jpg`);
+      let hasThumb = false;
+      try {
+        await execAsync(`ffmpeg -y -ss 00:00:00.500 -i "${targetPath}" -vframes 1 -vf "scale=400:-1" "${thumbPath}"`);
+        if (fs.existsSync(thumbPath) && fs.statSync(thumbPath).size > 0) {
+          hasThumb = true;
+        }
+      } catch {
+        // ignore ffmpeg error
+      }
+
+      const relPath = `/media-files/${guest.id}/${id}${ext}`;
+      const relThumb = hasThumb ? `/media-files/${guest.id}/${id}_thumb.jpg` : relPath;
 
       const [newMedia] = await db
         .insert(schema.media)
@@ -417,7 +542,7 @@ export async function guestRoutes(fastify: FastifyInstance) {
           guestId: guest.id,
           kind: 'video',
           path: relPath,
-          thumbPath: relPath,
+          thumbPath: relThumb,
           sizeBytes: stats.size,
           visibility: 'host',
         })
@@ -428,6 +553,15 @@ export async function guestRoutes(fastify: FastifyInstance) {
       for (const hostSocket of connectedHosts) {
         if (hostSocket.readyState === 1) {
           hostSocket.send(JSON.stringify({ type: 'new_media', media: newMedia }));
+        }
+      }
+
+      const guestSockets = connectedGuests.get(guest.id);
+      if (guestSockets) {
+        for (const gs of guestSockets) {
+          if (gs.readyState === 1) {
+            gs.send(JSON.stringify({ type: 'gallery_updated', media: newMedia }));
+          }
         }
       }
 
@@ -556,12 +690,40 @@ export async function guestRoutes(fastify: FastifyInstance) {
         return reply.status(404).send({ error: 'File on disk not found' });
       }
 
-      const contentType = mediaItem.kind === 'photo' ? 'image/jpeg' : 'video/mp4';
+      const stats = fs.statSync(filePath);
+      const ext = path.extname(filePath).toLowerCase();
+      let contentType = 'application/octet-stream';
+      if (mediaItem.kind === 'photo') {
+        contentType = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+      } else {
+        if (ext === '.webm') contentType = 'video/webm';
+        else if (ext === '.mov') contentType = 'video/quicktime';
+        else if (ext === '.ogv') contentType = 'video/ogg';
+        else contentType = 'video/mp4';
+      }
+
+      const range = req.headers.range;
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+        const chunksize = end - start + 1;
+
+        reply.status(206);
+        reply.header('Content-Range', `bytes ${start}-${end}/${stats.size}`);
+        reply.header('Accept-Ranges', 'bytes');
+        reply.header('Content-Length', chunksize);
+        reply.header('Content-Type', contentType);
+        return reply.send(fs.createReadStream(filePath, { start, end }));
+      }
+
       reply.header('Content-Type', contentType);
+      reply.header('Content-Length', stats.size);
+      reply.header('Accept-Ranges', 'bytes');
       reply.header('Cache-Control', 'private, max-age=86400, stale-while-revalidate=604800');
       if (isDownload) {
-        const ext = mediaItem.kind === 'photo' ? 'jpg' : 'mp4';
-        reply.header('Content-Disposition', `attachment; filename="gather-${mediaItem.id.slice(0, 8)}.${ext}"`);
+        const downloadExt = ext.replace(/^\./, '') || (mediaItem.kind === 'photo' ? 'jpg' : 'mp4');
+        reply.header('Content-Disposition', `attachment; filename="gather-${mediaItem.id.slice(0, 8)}.${downloadExt}"`);
       }
 
       return reply.send(fs.createReadStream(filePath));
@@ -598,7 +760,34 @@ export async function guestRoutes(fastify: FastifyInstance) {
         return reply.status(404).send({ error: 'File on disk not found' });
       }
 
-      reply.header('Content-Type', 'image/jpeg');
+      const stats = fs.statSync(filePath);
+      const ext = path.extname(filePath).toLowerCase();
+      let contentType = 'application/octet-stream';
+      if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+      else if (ext === '.png') contentType = 'image/png';
+      else if (ext === '.webp') contentType = 'image/webp';
+      else if (ext === '.webm') contentType = 'video/webm';
+      else if (ext === '.mov') contentType = 'video/quicktime';
+      else if (ext === '.mp4') contentType = 'video/mp4';
+
+      const range = req.headers.range;
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+        const chunksize = end - start + 1;
+
+        reply.status(206);
+        reply.header('Content-Range', `bytes ${start}-${end}/${stats.size}`);
+        reply.header('Accept-Ranges', 'bytes');
+        reply.header('Content-Length', chunksize);
+        reply.header('Content-Type', contentType);
+        return reply.send(fs.createReadStream(filePath, { start, end }));
+      }
+
+      reply.header('Content-Type', contentType);
+      reply.header('Content-Length', stats.size);
+      reply.header('Accept-Ranges', 'bytes');
       reply.header('Cache-Control', 'private, max-age=86400, stale-while-revalidate=604800');
       return reply.send(fs.createReadStream(filePath));
     });

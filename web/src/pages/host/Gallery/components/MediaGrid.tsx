@@ -75,12 +75,21 @@ export function MediaGrid({
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white relative">
-              <video
-                src={item.path}
-                className="w-full h-full object-cover opacity-80"
-                muted
-                preload="metadata"
-              />
+              {item.thumbPath && !item.thumbPath.endsWith('.mp4') && !item.thumbPath.endsWith('.webm') && !item.thumbPath.endsWith('.mov') ? (
+                <img
+                  src={item.thumbPath}
+                  alt={`Video by ${item.uploaderName}`}
+                  className="w-full h-full object-cover opacity-85"
+                  loading="lazy"
+                />
+              ) : (
+                <video
+                  src={item.path}
+                  className="w-full h-full object-cover opacity-80"
+                  muted
+                  preload="metadata"
+                />
+              )}
               <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30">
                 <Video className="w-7 h-7 text-white drop-shadow-md" />
               </div>

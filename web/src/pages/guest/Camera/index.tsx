@@ -31,8 +31,7 @@ export default function GuestCameraPage() {
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const currentVideoIdRef = useRef<string | null>(null);
-  const videoSeqRef = useRef<number>(0);
+  const recordedChunksRef = useRef<Blob[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const previewIntervalRef = useRef<any>(null);
 
@@ -377,6 +376,11 @@ export default function GuestCameraPage() {
 
   // Upload photo in background without freezing the camera or shutter button
   const uploadPhotoInBackground = async (rawBlob: Blob | File) => {
+    // If incoming file is a video, route directly to video handler
+    if (rawBlob.type && rawBlob.type.startsWith('video/')) {
+      return uploadVideoBlob(rawBlob, rawBlob.type);
+    }
+
     setBgUploadCount((c) => c + 1);
     try {
       try {
@@ -408,12 +412,70 @@ export default function GuestCameraPage() {
         if (res.ok) {
           showToast('Photo uploaded to host server!');
         }
-      } catch (uploadErr) {
+      } catch {
         // Expected when disconnected/offline. Photo is already saved safely in IndexedDB and mesh
         console.log('Operating in pure offline mode. Photo stored locally in P2P mesh.');
       }
     } catch (err: any) {
       console.error('Background upload error:', err);
+    } finally {
+      setBgUploadCount((c) => Math.max(0, c - 1));
+    }
+  };
+
+  // Upload video blob in background with offline storage backup
+  const uploadVideoBlob = async (videoBlob: Blob | File, mimeType?: string) => {
+    setBgUploadCount((c) => c + 1);
+    try {
+      // 1. Save offline in local IndexedDB
+      try {
+        const { savePhotoLocally } = await import('../../../lib/offlineStorage');
+        const hash = await savePhotoLocally(videoBlob);
+        try {
+          if (wsRef.current?.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: 'catalog_update', hash }));
+          }
+        } catch {
+          // ignore mesh broadcast failure
+        }
+      } catch (err) {
+        console.warn('Failed to save video offline:', err);
+      }
+      showToast('Video saved locally!');
+
+      // 2. Upload to server
+      try {
+        const detectedMime = mimeType || videoBlob.type || 'video/mp4';
+        let ext = 'mp4';
+        if (detectedMime.includes('webm')) ext = 'webm';
+        else if (detectedMime.includes('quicktime') || detectedMime.includes('mov')) ext = 'mov';
+
+        const formData = new FormData();
+        formData.append('file', videoBlob, `video.${ext}`);
+
+        const res = await fetch('/api/upload/video', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (res.ok) {
+          showToast('Video uploaded to host server!');
+        } else {
+          // Fallback to /api/upload/photo if needed
+          const fbRes = await fetch('/api/upload/photo', {
+            method: 'POST',
+            body: formData,
+          });
+          if (fbRes.ok) {
+            showToast('Video uploaded to host server!');
+          }
+        }
+      } catch {
+        console.log('Operating in pure offline mode. Video stored locally in P2P mesh.');
+      }
+    } catch (err: any) {
+      console.error('Background video upload error:', err);
+      showToast(err.message || 'Failed to save video');
     } finally {
       setBgUploadCount((c) => Math.max(0, c - 1));
     }
@@ -474,38 +536,36 @@ export default function GuestCameraPage() {
 
     try {
       const stream = streamRef.current;
-      const videoId = crypto.randomUUID();
-      currentVideoIdRef.current = videoId;
-      videoSeqRef.current = 0;
+      recordedChunksRef.current = [];
 
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('video/mp4')
-          ? 'video/mp4'
-          : MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-          ? 'video/webm;codecs=vp9'
-          : 'video/webm',
-      });
+      let mimeType = '';
+      const supportedTypes = [
+        'video/mp4;codecs=avc1',
+        'video/mp4',
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+      ];
+      for (const t of supportedTypes) {
+        if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
+          mimeType = t;
+          break;
+        }
+      }
+
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
 
       mediaRecorderRef.current = mediaRecorder;
 
-      mediaRecorder.ondataavailable = async (e) => {
-        if (e.data && e.data.size > 0 && currentVideoIdRef.current) {
-          const seq = videoSeqRef.current++;
-          const formData = new FormData();
-          formData.append('file', e.data);
-
-          try {
-            await fetch(`/api/upload/video-chunk?id=${currentVideoIdRef.current}&seq=${seq}`, {
-              method: 'POST',
-              body: formData,
-            });
-          } catch (err) {
-            console.error('Video chunk upload error:', err);
-          }
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          recordedChunksRef.current.push(e.data);
         }
       };
 
-      mediaRecorder.start(4000); // 4-second time-sliced chunks
+      mediaRecorder.start(1000); // 1-second chunks for continuous buffer population
       setIsRecording(true);
       setRecordDuration(0);
     } catch (err: any) {
@@ -513,23 +573,35 @@ export default function GuestCameraPage() {
     }
   };
 
-  const stopRecording = async () => {
+  const stopRecording = () => {
     if (!mediaRecorderRef.current || !isRecording) return;
 
-    mediaRecorderRef.current.stop();
+    const mediaRecorder = mediaRecorderRef.current;
     setIsRecording(false);
     setUploading(true);
 
-    const videoId = currentVideoIdRef.current;
-    if (videoId) {
+    mediaRecorder.onstop = async () => {
       try {
-        await api(`/api/upload/video-done?id=${videoId}`, { method: 'POST' });
-        showToast('Video uploaded to host!');
+        const chunks = recordedChunksRef.current;
+        if (chunks.length > 0) {
+          const mime = mediaRecorder.mimeType || 'video/webm';
+          const videoBlob = new Blob(chunks, { type: mime });
+          await uploadVideoBlob(videoBlob, mime);
+        } else {
+          showToast('No video recorded');
+        }
       } catch (err: any) {
         showToast(err.message || 'Failed to finalize video');
       } finally {
         setUploading(false);
       }
+    };
+
+    try {
+      mediaRecorder.stop();
+    } catch (err: any) {
+      console.error('Error stopping MediaRecorder:', err);
+      setUploading(false);
     }
   };
 
@@ -679,7 +751,7 @@ export default function GuestCameraPage() {
 
               <label className="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2 border border-slate-700 cursor-pointer active:scale-95">
                 <Upload className="w-4 h-4 text-slate-300" />
-                <span>Or Snap photo with System Camera</span>
+                <span>{mode === 'video' ? 'Or Record with System Camera' : 'Or Snap photo with System Camera'}</span>
                 <input
                   type="file"
                   accept="image/*,video/*"
@@ -688,7 +760,11 @@ export default function GuestCameraPage() {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    uploadPhotoInBackground(file);
+                    if (file.type.startsWith('video/')) {
+                      uploadVideoBlob(file, file.type);
+                    } else {
+                      uploadPhotoInBackground(file);
+                    }
                     e.target.value = '';
                   }}
                 />
@@ -759,6 +835,8 @@ export default function GuestCameraPage() {
                 : 'Tap to capture'
               : isRecording
               ? 'Tap to stop recording'
+              : bgUploadCount > 0
+              ? `Uploading ${bgUploadCount} video${bgUploadCount > 1 ? 's' : ''} in background...`
               : 'Tap to start recording'}
           </p>
         </div>

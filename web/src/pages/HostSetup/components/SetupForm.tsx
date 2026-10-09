@@ -1,8 +1,16 @@
 import React from 'react';
-import { Calendar, Lock, ArrowRight } from 'lucide-react';
+import { Calendar, Lock, ArrowRight, ChevronDown } from 'lucide-react';
 
 interface SetupFormProps {
   isLoginMode: boolean;
+  events?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    date?: string | null;
+  }>;
+  selectedEventId?: string;
+  setSelectedEventId?: (v: string) => void;
   name: string;
   setName: (v: string) => void;
   date: string;
@@ -15,6 +23,9 @@ interface SetupFormProps {
 
 export function SetupForm({
   isLoginMode,
+  events = [],
+  selectedEventId,
+  setSelectedEventId,
   name,
   setName,
   date,
@@ -26,6 +37,30 @@ export function SetupForm({
 }: SetupFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {isLoginMode && events.length > 0 && (
+        <div>
+          <label className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1.5 flex items-center justify-between">
+            <span>Select Event to Open</span>
+            {events.length > 1 && (
+              <span className="text-[10px] text-slate-400 font-normal">{events.length} available</span>
+            )}
+          </label>
+          <div className="relative">
+            <select
+              value={selectedEventId}
+              onChange={(e) => setSelectedEventId?.(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white text-sm transition appearance-none cursor-pointer pr-10"
+            >
+              {events.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.name} ({ev.slug}){ev.date ? ` • ${ev.date}` : ''}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+          </div>
+        </div>
+      )}
       {!isLoginMode && (
         <>
           <div>

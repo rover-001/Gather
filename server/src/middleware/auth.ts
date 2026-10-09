@@ -32,7 +32,11 @@ export async function requireHost(req: FastifyRequest, reply: FastifyReply) {
 }
 
 export async function requireGuest(req: FastifyRequest, reply: FastifyReply) {
-  const guestToken = req.cookies.guest_token;
+  let guestToken = req.cookies.guest_token;
+  if (!guestToken && req.headers.authorization?.startsWith('Bearer ')) {
+    guestToken = req.headers.authorization.slice(7).trim();
+  }
+
   if (!guestToken) {
     return reply.status(401).send({ error: 'Unauthorized: guest login required' });
   }

@@ -25,12 +25,19 @@ export function HostLayout({ children, eventName }: HostLayoutProps) {
   const location = useLocation();
 
   const [events, setEvents] = useState<any[]>([]);
+  const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     api('/api/host/events')
       .then((data: any) => setEvents(data.events || []))
+      .catch(() => {});
+
+    api('/api/host/event')
+      .then((data: any) => {
+        if (data.event) setCurrentEvent(data.event);
+      })
       .catch(() => {});
   }, []);
 
@@ -135,8 +142,13 @@ export function HostLayout({ children, eventName }: HostLayoutProps) {
               <div className="min-w-0 pr-2">
                 <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Active Event</span>
                 <span className="text-xs font-semibold text-slate-900 truncate block">
-                  {eventName || 'Current Event'}
+                  {eventName || currentEvent?.name || 'Current Event'}
                 </span>
+                {currentEvent?.slug && (
+                  <span className="text-[10px] text-slate-400 font-mono truncate block">
+                    /{currentEvent.slug}
+                  </span>
+                )}
               </div>
               <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
             </button>
@@ -147,18 +159,28 @@ export function HostLayout({ children, eventName }: HostLayoutProps) {
                   Switch Event
                 </div>
                 <div className="max-h-48 overflow-y-auto space-y-0.5">
-                  {events.map((e) => (
-                    <button
-                      key={e.id}
-                      onClick={() => handleSwitchEvent(e.id)}
-                      className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-50 text-xs text-slate-700 font-medium flex items-center justify-between cursor-pointer"
-                    >
-                      <span className="truncate">{e.name}</span>
-                      {e.name === eventName && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-600 ml-2" />
-                      )}
-                    </button>
-                  ))}
+                  {events.map((e) => {
+                    const isCurrent = currentEvent?.id ? e.id === currentEvent.id : e.name === (eventName || currentEvent?.name);
+                    return (
+                      <button
+                        key={e.id}
+                        onClick={() => handleSwitchEvent(e.id)}
+                        className={`w-full text-left px-2.5 py-2 rounded-lg text-xs font-medium flex items-center justify-between cursor-pointer transition ${
+                          isCurrent ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1 pr-2">
+                          <span className="block truncate font-semibold text-slate-900">{e.name}</span>
+                          <span className="block text-[10px] text-slate-400 truncate font-mono">
+                            {e.slug}{e.date ? ` • ${e.date}` : ''}
+                          </span>
+                        </div>
+                        {isCurrent && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-600 shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="border-t border-slate-100 pt-1">
                   <a

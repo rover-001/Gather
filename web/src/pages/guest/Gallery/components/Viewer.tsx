@@ -7,6 +7,7 @@ export default function GuestViewerPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [guestInfo, setGuestInfo] = useState<any>(null);
+  const [isVideo, setIsVideo] = useState(false);
 
   useEffect(() => {
     api('/api/me')
@@ -21,12 +22,12 @@ export default function GuestViewerPage() {
 
   const handleDelete = async () => {
     if (!id) return;
-    if (!confirm('Are you sure you want to delete this photo?')) return;
+    if (!confirm('Are you sure you want to delete this?')) return;
     try {
       await api(`/api/media/${id}`, { method: 'DELETE' });
       navigate('/album');
     } catch (err: any) {
-      alert(err.message || 'Failed to delete photo');
+      alert(err.message || 'Failed to delete');
     }
   };
 
@@ -45,7 +46,7 @@ export default function GuestViewerPage() {
           <button
             onClick={handleDelete}
             className="p-2.5 rounded-full bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 backdrop-blur-md transition cursor-pointer"
-            title="Delete photo"
+            title="Delete"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -65,26 +66,23 @@ export default function GuestViewerPage() {
       {/* Media Viewer Area */}
       <div className="flex-1 flex items-center justify-center p-2 relative overflow-hidden">
         <div className="max-w-full max-h-[80vh] flex items-center justify-center">
-          {/* Try loading image, fall back to video if error */}
-          <img
-            src={`/api/media/${id}`}
-            alt="Viewing memory"
-            className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl"
-            onError={(e) => {
-              // If it fails to render as an image, render video element
-              const target = e.currentTarget;
-              target.style.display = 'none';
-              const video = document.getElementById('viewer-video');
-              if (video) video.style.display = 'block';
-            }}
-          />
-          <video
-            id="viewer-video"
-            src={`/api/media/${id}`}
-            controls
-            playsInline
-            className="hidden max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl"
-          />
+          {!isVideo ? (
+            <img
+              src={`/api/media/${id}`}
+              alt="Viewing memory"
+              className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl"
+              onError={() => setIsVideo(true)}
+            />
+          ) : (
+            <video
+              id="viewer-video"
+              src={`/api/media/${id}`}
+              controls
+              playsInline
+              autoPlay
+              className="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl"
+            />
+          )}
         </div>
       </div>
 

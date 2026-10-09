@@ -125,13 +125,22 @@ export default function GuestGalleryPage() {
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white relative">
-            <video
-              src={`/api/media/${item.id}`}
-              className="w-full h-full object-cover opacity-75 pointer-events-none"
-              muted
-              playsInline
-              preload="none"
-            />
+            {item.thumbPath && !item.thumbPath.endsWith('.mp4') && !item.thumbPath.endsWith('.webm') && !item.thumbPath.endsWith('.mov') ? (
+              <img
+                src={`/api/media/${item.id}/thumb`}
+                alt="Thumbnail"
+                className="w-full h-full object-cover opacity-85"
+                loading="lazy"
+              />
+            ) : (
+              <video
+                src={`/api/media/${item.id}`}
+                className="w-full h-full object-cover opacity-75 pointer-events-none"
+                muted
+                playsInline
+                preload="metadata"
+              />
+            )}
             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
               <Video className="w-7 h-7 text-white drop-shadow-md" />
             </div>
