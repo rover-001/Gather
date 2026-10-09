@@ -1,0 +1,45 @@
+---
+type: map
+---
+
+# Repository Map
+
+- .oxlintrc.json
+- AGENTS.md
+- README.md
+- index.html
+- package-lock.json
+- package.json
+- public/ (2 files, 5401 bytes)
+  - favicon.svg
+  - icons.svg
+- src/ (47 files, 271768 bytes)
+  - App.css
+  - App.tsx
+  - assets/ (3 files, 25892 bytes)
+    - hero.png
+    - react.svg
+    - vite.svg
+  - components/ (1 files, 728 bytes)
+    - Logo.tsx
+  - index.css
+  - layouts/ (2 files, 11028 bytes)
+    - GuestLayout.tsx
+    - HostLayout.tsx
+  - lib/ (1 files, 631 bytes)
+    - api.ts
+  - main.tsx
+  - pages/ (36 files, 224891 bytes)
+    - Dashboard/ (2 files, 5406 bytes)
+      - index.tsx
+    - HostPasses/ (6 files, 26184 bytes)
+      - index.tsx
+      - types.ts
+    - HostSetup/ (2 files, 8182 bytes)
+      - index.tsx
+    - Landing/ (4 files, 29141 bytes)
+      - index.tsx
+- tsconfig.app.json
+- tsconfig.json
+- tsconfig.node.json
+- vite.config.ts

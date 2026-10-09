@@ -1,0 +1,137 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { HeartHandshake, AlertCircle } from 'lucide-react';
+import { SetupForm } from './components/SetupForm';
+
+export default function HostSetup() {
+  const navigate = useNavigate();
+  const [hasEvent, setHasEvent] = useState<boolean | null>(null);
+  const [isLoginMode, setIsLoginMode] = useState<boolean>(false);
+  const [name, setName] = useState('');
+  const [date, setDate] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/host/status')
+      .then((res) => res.json())
+      .then((data) => {
+        setHasEvent(data.hasEvent);
+        if (data.hasEvent) {
+          setIsLoginMode(true);
+        }
+      })
+      .catch(() => setHasEvent(false));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const endpoint = isLoginMode ? '/api/host/login' : '/api/host/setup';
+      const payload = isLoginMode ? { password } : { name, date, password };
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to authenticate');
+      }
+
+      navigate('/host/event');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col items-center justify-center p-6 selection:bg-brand-600 selection:text-white">
+      <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-100 text-slate-800 mb-2 border border-slate-200">
+            <HeartHandshake className="w-7 h-7" />
+          </div>
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-slate-900">
+            {isLoginMode ? 'Host Access' : 'Create New Event'}
+          </h1>
+          <p className="text-xs text-slate-500">
+            {isLoginMode
+              ? 'Enter your host master password to manage your event'
+              : 'Setup a new private wedding or event lens'}
+          </p>
+        </div>
+
+        {/* Mode Toggle Tabs */}
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoginMode(true);
+              setError(null);
+            }}
+            className={`py-2 rounded-lg transition cursor-pointer ${
+              isLoginMode ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            Log In
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoginMode(false);
+              setError(null);
+            }}
+            className={`py-2 rounded-lg transition cursor-pointer ${
+              !isLoginMode ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            Create New Event
+          </button>
+        </div>
+
+        {error && (
+          <div className="flex items-center space-x-2 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <SetupForm
+          isLoginMode={isLoginMode}
+          name={name}
+          setName={setName}
+          date={date}
+          setDate={setDate}
+          password={password}
+          setPassword={setPassword}
+          loading={loading}
+          onSubmit={handleSubmit}
+        />
+
+        {hasEvent && (
+          <div className="text-center pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setIsLoginMode(!isLoginMode);
+                setError(null);
+              }}
+              className="text-xs text-slate-500 hover:text-slate-900 transition underline cursor-pointer"
+            >
+              {isLoginMode ? 'Need to run setup again?' : 'Already have an event? Log in'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
